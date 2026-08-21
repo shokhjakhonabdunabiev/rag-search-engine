@@ -1,4 +1,4 @@
-import argparse
+import argparse, json
 
 
 def main() -> None:
@@ -12,11 +12,23 @@ def main() -> None:
 
     match args.command:
         case "search":
-            # print the search query here
             print(f"Searching for: {args.query}")
+            results = serach(args.query)
+            for i, res in enumerate(results, 1):
+                print(f"{i}. {res["title"]}")
         case _:
             parser.print_help()
 
+def serach(query: str) -> list[str]:
+    res = []
+    with open("data/movies.json") as file:
+        data = json.load(file)
+        for movie in data["movies"]:
+            if len(res) == 5:
+                break
+            if query in movie["title"]:
+                res.append(movie["title"])
+    return res
 
 if __name__ == "__main__":
     main()
