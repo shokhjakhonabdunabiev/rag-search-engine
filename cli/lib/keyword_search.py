@@ -1,6 +1,7 @@
 import os
 import pickle
 import string
+import math
 from collections import defaultdict, Counter
 
 from nltk.stem import PorterStemmer
@@ -59,6 +60,11 @@ class InvertedIndex:
 
     def get_tf(self, doc_id: int, term: str) -> int:
         return self.term_frequencies[doc_id][term]
+
+    def get_idf(self, term: str) -> float:
+        doc_count = len(self.docmap)
+        term_doc_count = len(self.index[term])
+        return math.log((doc_count + 1) / (term_doc_count + 1))
 
 
 def build_command() -> None:
@@ -129,3 +135,9 @@ def tf_command(doc_id: int, term: str) -> int:
     idx = InvertedIndex()
     idx.load()
     return idx.get_tf(doc_id, tokenize_single_term(term))
+
+
+def idf_command(term: str) -> float:
+    idx = InvertedIndex()
+    idx.load()
+    return idx.get_idf(tokenize_single_term(term))
